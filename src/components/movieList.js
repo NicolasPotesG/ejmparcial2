@@ -1,55 +1,79 @@
-import React, { useEffect, useState } from "react";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
+import React from "react";
+import MovieDetail from "./movieDetail";
 import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/Table";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./movieList.css";
 
-const MovieList = () => {
-  const [list, setList] = useState([]);
+import {
+  FormattedDate,
+  FormattedNumber,
+  FormattedPlural,
+  FormattedMessage,
+} from "react-intl";
 
-  const URL =
-    "https://gist.githubusercontent.com/josejbocanegra/8b436480129d2cb8d81196050d485c56/raw/48cc65480675bf8b144d89ecb8bcd663b05e1db0/data-en.json";
-  fetch(URL)
-    .then((response) => response.json())
-    .then((data) => setList(data));
-
+const MovieList = (props) => {
   return (
-    <Container fluid>
-      <Row>
-        <Col xs={7}>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Username</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td colSpan="2">Larry the Bird</td>
-                <td>@twitter</td>
-              </tr>
-            </tbody>
-          </Table>
-        </Col>
-      </Row>
-    </Container>
+    <React.Fragment>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>
+              <FormattedMessage id="Name" />
+            </th>
+            <th>
+              <FormattedMessage id="DirectedBy" />
+            </th>
+            <th>
+              <FormattedMessage id="Country" />
+            </th>
+            <th>
+              <FormattedMessage id="Budget" />
+            </th>
+            <th>
+              <FormattedMessage id="Release" />
+            </th>
+            <th>
+              <FormattedMessage id="Views" />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.movies.map((movie) => (
+            <tr
+              onClick={() => props.updateCurrentMovie(movie)}
+              className="rows"
+            >
+              <td>{movie.id}</td>
+              <td>{movie.name}</td>
+              <td>{movie.directedBy}</td>
+              <td>{movie.country}</td>
+              <td>
+                {movie.budget}{" "}
+                <FormattedPlural
+                  value={movie.budget}
+                  one={<FormattedMessage id="Million" />}
+                  other={<FormattedMessage id="Millions" />}
+                />
+              </td>
+              <td>
+                <FormattedDate
+                  value={new Date(movie.releaseDate)}
+                  year="numeric"
+                  month="long"
+                  day="numeric"
+                  weekday="long"
+                />
+              </td>
+              <td>
+                <FormattedNumber value={movie.views} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </React.Fragment>
   );
 };
 export default MovieList;
